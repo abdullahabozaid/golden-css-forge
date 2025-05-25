@@ -56,10 +56,12 @@ const PreviewPane = ({ config, sidebarCollapsed }: PreviewPaneProps) => {
           <button
             style={baseStyle}
             onMouseEnter={(e) => {
-              Object.assign(e.target.style, hoverStyle);
+              const target = e.target as HTMLElement;
+              Object.assign(target.style, hoverStyle);
             }}
             onMouseLeave={(e) => {
-              Object.assign(e.target.style, baseStyle);
+              const target = e.target as HTMLElement;
+              Object.assign(target.style, baseStyle);
             }}
             className="focus:outline-none focus:ring-2 focus:ring-gold focus:ring-opacity-50"
           >
