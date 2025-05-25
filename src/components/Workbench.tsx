@@ -6,7 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { cn } from '@/lib/utils';
+import ColorSwatch from '@/components/ColorSwatch';
+import AnimationCard from '@/components/AnimationCard';
 
 interface WorkbenchProps {
   activeCategory: string;
@@ -25,6 +28,26 @@ const Workbench = ({
   config, 
   onConfigChange 
 }: WorkbenchProps) => {
+  const currentConfig = config[buttonState] || {};
+
+  const handleGradientChange = (type: 'background' | 'border', key: string, value: any) => {
+    const gradientKey = type === 'background' ? 'backgroundGradient' : 'borderGradient';
+    onConfigChange(gradientKey, {
+      ...currentConfig[gradientKey],
+      [key]: value
+    });
+  };
+
+  const handleAnimationChange = (animationType: string, key: string, value: any) => {
+    onConfigChange('animations', {
+      ...currentConfig.animations,
+      [animationType]: {
+        ...currentConfig.animations?.[animationType],
+        [key]: value
+      }
+    });
+  };
+
   return (
     <div className={cn(
       "flex-1 p-6 transition-all duration-200",
@@ -63,7 +86,7 @@ const Workbench = ({
                 </Label>
                 <Input
                   id="label-text"
-                  value={config[buttonState]?.label || 'Button'}
+                  value={currentConfig?.label || 'Button'}
                   onChange={(e) => onConfigChange('label', e.target.value)}
                   className="mt-1 focus:ring-gold focus:border-gold"
                   placeholder="Enter button text"
@@ -79,28 +102,85 @@ const Workbench = ({
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="bg-color" className="text-sm font-medium text-gray-700">
-                  Background Color
-                </Label>
-                <Input
-                  id="bg-color"
-                  type="color"
-                  value={config[buttonState]?.backgroundColor || '#3B82F6'}
-                  onChange={(e) => onConfigChange('backgroundColor', e.target.value)}
-                  className="mt-1 h-10 focus:ring-gold focus:border-gold"
-                />
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">Type</Label>
+                <ToggleGroup
+                  type="single"
+                  value={currentConfig?.backgroundType || 'solid'}
+                  onValueChange={(value) => value && onConfigChange('backgroundType', value)}
+                  className="justify-start"
+                >
+                  <ToggleGroupItem value="solid" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                    Solid
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="gradient" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                    Gradient
+                  </ToggleGroupItem>
+                </ToggleGroup>
               </div>
+
+              {currentConfig?.backgroundType === 'solid' ? (
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Background Color
+                  </Label>
+                  <ColorSwatch
+                    value={currentConfig?.backgroundColor || '#3B82F6'}
+                    onChange={(value) => onConfigChange('backgroundColor', value)}
+                  />
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 mb-2 block">Start Color</Label>
+                      <ColorSwatch
+                        value={currentConfig?.backgroundGradient?.start || '#3B82F6'}
+                        onChange={(value) => handleGradientChange('background', 'start', value)}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 mb-2 block">End Color</Label>
+                      <ColorSwatch
+                        value={currentConfig?.backgroundGradient?.end || '#1E40AF'}
+                        onChange={(value) => handleGradientChange('background', 'end', value)}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Direction</Label>
+                    <ToggleGroup
+                      type="single"
+                      value={currentConfig?.backgroundGradient?.direction || 'left-right'}
+                      onValueChange={(value) => value && handleGradientChange('background', 'direction', value)}
+                      className="grid grid-cols-2 gap-2"
+                    >
+                      <ToggleGroupItem value="left-right" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                        Left→Right
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="top-bottom" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                        Top→Bottom
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="45deg" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                        45°
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="135deg" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                        135°
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </div>
+                </div>
+              )}
               
               <div>
                 <Label htmlFor="bg-opacity" className="text-sm font-medium text-gray-700">
-                  Opacity ({config[buttonState]?.backgroundOpacity || 100}%)
+                  Opacity ({currentConfig?.backgroundOpacity || 100}%)
                 </Label>
                 <Slider
                   id="bg-opacity"
                   min={0}
                   max={100}
                   step={1}
-                  value={[config[buttonState]?.backgroundOpacity || 100]}
+                  value={[currentConfig?.backgroundOpacity || 100]}
                   onValueChange={(value) => onConfigChange('backgroundOpacity', value[0])}
                   className="mt-2"
                 />
@@ -116,31 +196,88 @@ const Workbench = ({
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="border-width" className="text-sm font-medium text-gray-700">
-                  Border Width ({config[buttonState]?.borderWidth || 1}px)
+                  Border Width ({currentConfig?.borderWidth || 1}px)
                 </Label>
                 <Slider
                   id="border-width"
                   min={0}
                   max={10}
                   step={1}
-                  value={[config[buttonState]?.borderWidth || 1]}
+                  value={[currentConfig?.borderWidth || 1]}
                   onValueChange={(value) => onConfigChange('borderWidth', value[0])}
                   className="mt-2"
                 />
               </div>
-              
+
               <div>
-                <Label htmlFor="border-color" className="text-sm font-medium text-gray-700">
-                  Border Color
-                </Label>
-                <Input
-                  id="border-color"
-                  type="color"
-                  value={config[buttonState]?.borderColor || '#D1D5DB'}
-                  onChange={(e) => onConfigChange('borderColor', e.target.value)}
-                  className="mt-1 h-10 focus:ring-gold focus:border-gold"
-                />
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">Type</Label>
+                <ToggleGroup
+                  type="single"
+                  value={currentConfig?.borderType || 'solid'}
+                  onValueChange={(value) => value && onConfigChange('borderType', value)}
+                  className="justify-start"
+                >
+                  <ToggleGroupItem value="solid" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                    Solid
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="gradient" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                    Gradient
+                  </ToggleGroupItem>
+                </ToggleGroup>
               </div>
+
+              {currentConfig?.borderType === 'solid' ? (
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Border Color
+                  </Label>
+                  <ColorSwatch
+                    value={currentConfig?.borderColor || '#D1D5DB'}
+                    onChange={(value) => onConfigChange('borderColor', value)}
+                  />
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 mb-2 block">Start Color</Label>
+                      <ColorSwatch
+                        value={currentConfig?.borderGradient?.start || '#D1D5DB'}
+                        onChange={(value) => handleGradientChange('border', 'start', value)}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 mb-2 block">End Color</Label>
+                      <ColorSwatch
+                        value={currentConfig?.borderGradient?.end || '#9CA3AF'}
+                        onChange={(value) => handleGradientChange('border', 'end', value)}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Direction</Label>
+                    <ToggleGroup
+                      type="single"
+                      value={currentConfig?.borderGradient?.direction || 'left-right'}
+                      onValueChange={(value) => value && handleGradientChange('border', 'direction', value)}
+                      className="grid grid-cols-2 gap-2"
+                    >
+                      <ToggleGroupItem value="left-right" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                        Left→Right
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="top-bottom" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                        Top→Bottom
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="45deg" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                        45°
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="135deg" className="data-[state=on]:bg-gold data-[state=on]:text-white">
+                        135°
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -152,14 +289,14 @@ const Workbench = ({
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="border-radius" className="text-sm font-medium text-gray-700">
-                  Radius ({config[buttonState]?.borderRadius || 6}px)
+                  Radius ({currentConfig?.borderRadius || 6}px)
                 </Label>
                 <Slider
                   id="border-radius"
                   min={0}
                   max={50}
                   step={1}
-                  value={[config[buttonState]?.borderRadius || 6]}
+                  value={[currentConfig?.borderRadius || 6]}
                   onValueChange={(value) => onConfigChange('borderRadius', value[0])}
                   className="mt-2"
                 />
@@ -178,7 +315,7 @@ const Workbench = ({
                   Shadow Type
                 </Label>
                 <Select
-                  value={config[buttonState]?.shadowType || 'none'}
+                  value={currentConfig?.shadowType || 'none'}
                   onValueChange={(value) => onConfigChange('shadowType', value)}
                 >
                   <SelectTrigger className="mt-1 focus:ring-gold focus:border-gold">
@@ -196,22 +333,162 @@ const Workbench = ({
             </CardContent>
           </Card>
 
-          {/* Animation Card */}
+          {/* Animation Cards */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-gold">Animation Presets</h3>
+            
+            <AnimationCard
+              title="Scale"
+              enabled={currentConfig?.animations?.scale?.enabled || false}
+              onEnabledChange={(enabled) => handleAnimationChange('scale', 'enabled', enabled)}
+            >
+              <div>
+                <Label className="text-sm font-medium text-gray-700">
+                  Scale to ({currentConfig?.animations?.scale?.value || 1.05}×)
+                </Label>
+                <Slider
+                  min={1}
+                  max={2}
+                  step={0.05}
+                  value={[currentConfig?.animations?.scale?.value || 1.05]}
+                  onValueChange={(value) => handleAnimationChange('scale', 'value', value[0])}
+                  className="mt-2"
+                />
+              </div>
+            </AnimationCard>
+
+            <AnimationCard
+              title="Translate"
+              enabled={currentConfig?.animations?.translate?.enabled || false}
+              onEnabledChange={(enabled) => handleAnimationChange('translate', 'enabled', enabled)}
+            >
+              <div>
+                <Label className="text-sm font-medium text-gray-700">
+                  Translate Y ({currentConfig?.animations?.translate?.value || -2}px)
+                </Label>
+                <Slider
+                  min={-20}
+                  max={20}
+                  step={1}
+                  value={[currentConfig?.animations?.translate?.value || -2]}
+                  onValueChange={(value) => handleAnimationChange('translate', 'value', value[0])}
+                  className="mt-2"
+                />
+              </div>
+            </AnimationCard>
+
+            <AnimationCard
+              title="Rotate"
+              enabled={currentConfig?.animations?.rotate?.enabled || false}
+              onEnabledChange={(enabled) => handleAnimationChange('rotate', 'enabled', enabled)}
+            >
+              <div>
+                <Label className="text-sm font-medium text-gray-700">
+                  Rotate ({currentConfig?.animations?.rotate?.value || 0}°)
+                </Label>
+                <Slider
+                  min={0}
+                  max={45}
+                  step={1}
+                  value={[currentConfig?.animations?.rotate?.value || 0]}
+                  onValueChange={(value) => handleAnimationChange('rotate', 'value', value[0])}
+                  className="mt-2"
+                />
+              </div>
+            </AnimationCard>
+
+            <AnimationCard
+              title="Shake"
+              enabled={currentConfig?.animations?.shake?.enabled || false}
+              onEnabledChange={(enabled) => handleAnimationChange('shake', 'enabled', enabled)}
+            >
+              <div>
+                <Label className="text-sm font-medium text-gray-700">
+                  Shake intensity ({currentConfig?.animations?.shake?.value || 2}px)
+                </Label>
+                <Slider
+                  min={0}
+                  max={10}
+                  step={1}
+                  value={[currentConfig?.animations?.shake?.value || 2]}
+                  onValueChange={(value) => handleAnimationChange('shake', 'value', value[0])}
+                  className="mt-2"
+                />
+              </div>
+            </AnimationCard>
+
+            <AnimationCard
+              title="Pulse"
+              enabled={currentConfig?.animations?.pulse?.enabled || false}
+              onEnabledChange={(enabled) => handleAnimationChange('pulse', 'enabled', enabled)}
+            >
+              <div>
+                <Label className="text-sm font-medium text-gray-700">
+                  Pulse duration ({currentConfig?.animations?.pulse?.value || 1}s)
+                </Label>
+                <Slider
+                  min={0.5}
+                  max={3}
+                  step={0.1}
+                  value={[currentConfig?.animations?.pulse?.value || 1]}
+                  onValueChange={(value) => handleAnimationChange('pulse', 'value', value[0])}
+                  className="mt-2"
+                />
+              </div>
+            </AnimationCard>
+
+            <AnimationCard
+              title="Lamination Sweep"
+              enabled={currentConfig?.animations?.lamination?.enabled || false}
+              onEnabledChange={(enabled) => handleAnimationChange('lamination', 'enabled', enabled)}
+            >
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">
+                    Sweep speed ({currentConfig?.animations?.lamination?.speed || 1}s)
+                  </Label>
+                  <Slider
+                    min={0.5}
+                    max={5}
+                    step={0.1}
+                    value={[currentConfig?.animations?.lamination?.speed || 1]}
+                    onValueChange={(value) => handleAnimationChange('lamination', 'speed', value[0])}
+                    className="mt-2"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">
+                    Angle ({currentConfig?.animations?.lamination?.angle || 45}°)
+                  </Label>
+                  <Slider
+                    min={0}
+                    max={90}
+                    step={1}
+                    value={[currentConfig?.animations?.lamination?.angle || 45]}
+                    onValueChange={(value) => handleAnimationChange('lamination', 'angle', value[0])}
+                    className="mt-2"
+                  />
+                </div>
+              </div>
+            </AnimationCard>
+          </div>
+
+          {/* Transition Duration Card */}
           <Card className="border-gray-200">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg text-gold">Animation</CardTitle>
+              <CardTitle className="text-lg text-gold">Transition</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="transition-duration" className="text-sm font-medium text-gray-700">
-                  Transition Duration ({config[buttonState]?.transitionDuration || 200}ms)
+                  Transition Duration ({currentConfig?.transitionDuration || 200}ms)
                 </Label>
                 <Slider
                   id="transition-duration"
                   min={0}
                   max={1000}
                   step={50}
-                  value={[config[buttonState]?.transitionDuration || 200]}
+                  value={[currentConfig?.transitionDuration || 200]}
                   onValueChange={(value) => onConfigChange('transitionDuration', value[0])}
                   className="mt-2"
                 />
