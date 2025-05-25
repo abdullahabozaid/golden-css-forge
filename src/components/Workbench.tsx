@@ -48,9 +48,29 @@ const Workbench = ({
     });
   };
 
+  const getDirectionFromSliderValue = (value: number) => {
+    const directions = ['left-right', 'top-bottom', '45deg', '135deg'];
+    return directions[Math.floor(value)] || 'left-right';
+  };
+
+  const getSliderValueFromDirection = (direction: string) => {
+    const directions = ['left-right', 'top-bottom', '45deg', '135deg'];
+    return directions.indexOf(direction);
+  };
+
+  const getDirectionLabel = (direction: string) => {
+    const labels = {
+      'left-right': 'Left→Right',
+      'top-bottom': 'Top→Bottom',
+      '45deg': '45°',
+      '135deg': '135°'
+    };
+    return labels[direction as keyof typeof labels] || 'Left→Right';
+  };
+
   return (
     <div className={cn(
-      "flex-1 p-6 transition-all duration-200",
+      "flex-1 p-6 pl-16 transition-all duration-200",
       sidebarCollapsed ? "collapse:ml-16" : "collapse:ml-60",
       "max-collapse:ml-0"
     )}>
@@ -147,26 +167,17 @@ const Workbench = ({
                     </div>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Direction</Label>
-                    <ToggleGroup
-                      type="single"
-                      value={currentConfig?.backgroundGradient?.direction || 'left-right'}
-                      onValueChange={(value) => value && handleGradientChange('background', 'direction', value)}
-                      className="grid grid-cols-2 gap-2"
-                    >
-                      <ToggleGroupItem value="left-right" className="data-[state=on]:bg-gold data-[state=on]:text-white">
-                        Left→Right
-                      </ToggleGroupItem>
-                      <ToggleGroupItem value="top-bottom" className="data-[state=on]:bg-gold data-[state=on]:text-white">
-                        Top→Bottom
-                      </ToggleGroupItem>
-                      <ToggleGroupItem value="45deg" className="data-[state=on]:bg-gold data-[state=on]:text-white">
-                        45°
-                      </ToggleGroupItem>
-                      <ToggleGroupItem value="135deg" className="data-[state=on]:bg-gold data-[state=on]:text-white">
-                        135°
-                      </ToggleGroupItem>
-                    </ToggleGroup>
+                    <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Direction: {getDirectionLabel(currentConfig?.backgroundGradient?.direction || 'left-right')}
+                    </Label>
+                    <Slider
+                      min={0}
+                      max={3}
+                      step={1}
+                      value={[getSliderValueFromDirection(currentConfig?.backgroundGradient?.direction || 'left-right')]}
+                      onValueChange={(value) => handleGradientChange('background', 'direction', getDirectionFromSliderValue(value[0]))}
+                      className="mt-2"
+                    />
                   </div>
                 </div>
               )}
@@ -255,26 +266,17 @@ const Workbench = ({
                     </div>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Direction</Label>
-                    <ToggleGroup
-                      type="single"
-                      value={currentConfig?.borderGradient?.direction || 'left-right'}
-                      onValueChange={(value) => value && handleGradientChange('border', 'direction', value)}
-                      className="grid grid-cols-2 gap-2"
-                    >
-                      <ToggleGroupItem value="left-right" className="data-[state=on]:bg-gold data-[state=on]:text-white">
-                        Left→Right
-                      </ToggleGroupItem>
-                      <ToggleGroupItem value="top-bottom" className="data-[state=on]:bg-gold data-[state=on]:text-white">
-                        Top→Bottom
-                      </ToggleGroupItem>
-                      <ToggleGroupItem value="45deg" className="data-[state=on]:bg-gold data-[state=on]:text-white">
-                        45°
-                      </ToggleGroupItem>
-                      <ToggleGroupItem value="135deg" className="data-[state=on]:bg-gold data-[state=on]:text-white">
-                        135°
-                      </ToggleGroupItem>
-                    </ToggleGroup>
+                    <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Direction: {getDirectionLabel(currentConfig?.borderGradient?.direction || 'left-right')}
+                    </Label>
+                    <Slider
+                      min={0}
+                      max={3}
+                      step={1}
+                      value={[getSliderValueFromDirection(currentConfig?.borderGradient?.direction || 'left-right')]}
+                      onValueChange={(value) => handleGradientChange('border', 'direction', getDirectionFromSliderValue(value[0]))}
+                      className="mt-2"
+                    />
                   </div>
                 </div>
               )}
