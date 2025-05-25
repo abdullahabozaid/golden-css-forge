@@ -68,9 +68,9 @@ const Workbench = ({
   };
 
   return (
-    <div className="flex-1 min-w-0 mr-6">
-      <div className="h-full overflow-y-auto p-6 pl-16">
-        <div className="max-w-3xl">
+    <div className="flex-1 min-w-0" style={{ maxWidth: 'calc(100vw - 280px - 340px)' }}>
+      <div className="h-full overflow-y-auto p-6">
+        <div className="w-full">
           {/* State Tabs */}
           <Tabs value={buttonState} onValueChange={onStateChange} className="mb-6">
             <TabsList className="grid w-full grid-cols-2 max-w-md">

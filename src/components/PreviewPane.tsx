@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -135,7 +134,7 @@ const PreviewPane = ({ config, sidebarCollapsed }: PreviewPaneProps) => {
   };
 
   return (
-    <div className="w-80 flex-shrink-0 p-6">
+    <div className="w-80 flex-shrink-0 p-6" style={{ marginLeft: '-20px' }}>
       <Card className="border-gray-200 h-full">
         <CardHeader className="pb-4">
           <CardTitle className="text-lg text-gold">Live Preview</CardTitle>
