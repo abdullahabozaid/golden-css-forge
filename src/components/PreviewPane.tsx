@@ -135,10 +135,7 @@ const PreviewPane = ({ config, sidebarCollapsed }: PreviewPaneProps) => {
   };
 
   return (
-    <div className={cn(
-      "w-full collapse:w-96 collapse:fixed collapse:right-6 collapse:top-24 collapse:bottom-6",
-      "max-collapse:relative max-collapse:mt-8"
-    )}>
+    <div className="w-80 flex-shrink-0 p-6">
       <Card className="border-gray-200 h-full">
         <CardHeader className="pb-4">
           <CardTitle className="text-lg text-gold">Live Preview</CardTitle>

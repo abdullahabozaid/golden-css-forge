@@ -190,7 +190,7 @@ const Index = () => {
         onExport={handleExport}
       />
       
-      <div className="pt-16 flex">
+      <div className="pt-16 flex h-[calc(100vh-4rem)]">
         <Sidebar
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}
@@ -198,7 +198,7 @@ const Index = () => {
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
         
-        <div className="flex-1 flex max-collapse:flex-col">
+        <div className="flex flex-1 min-w-0">
           <Workbench
             activeCategory={activeCategory}
             sidebarCollapsed={sidebarCollapsed}
