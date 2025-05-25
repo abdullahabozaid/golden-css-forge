@@ -70,11 +70,13 @@ const Workbench = ({
 
   return (
     <div className={cn(
-      "flex-1 p-6 pl-16 transition-all duration-200",
+      "p-6 pl-16 transition-all duration-200 max-collapse:ml-0",
       sidebarCollapsed ? "collapse:ml-16" : "collapse:ml-60",
-      "max-collapse:ml-0"
+      // Add proper width constraints to prevent overlap
+      "collapse:max-w-[calc(100vw-480px)]", // Leave space for preview pane (384px + 96px margin)
+      "max-collapse:max-w-none"
     )}>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-2xl"> {/* Reduced from max-w-4xl to max-w-2xl */}
         {/* State Tabs */}
         <Tabs value={buttonState} onValueChange={onStateChange} className="mb-6">
           <TabsList className="grid w-full grid-cols-2 max-w-md">
