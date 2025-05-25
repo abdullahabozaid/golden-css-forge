@@ -110,21 +110,61 @@ const Index = () => {
         label: 'Preview Button',
         backgroundColor: '#3B82F6',
         backgroundOpacity: 100,
+        backgroundType: 'solid' as 'solid' | 'gradient',
+        backgroundGradient: {
+          start: '#3B82F6',
+          end: '#1E40AF',
+          direction: 'left-right' as 'left-right' | 'top-bottom' | '45deg' | '135deg'
+        },
         borderWidth: 1,
         borderColor: '#D1D5DB',
+        borderType: 'solid' as 'solid' | 'gradient',
+        borderGradient: {
+          start: '#D1D5DB',
+          end: '#9CA3AF',
+          direction: 'left-right' as 'left-right' | 'top-bottom' | '45deg' | '135deg'
+        },
         borderRadius: 6,
         shadowType: 'none',
         transitionDuration: 200,
+        animations: {
+          scale: { enabled: false, value: 1.05 },
+          translate: { enabled: false, value: -2 },
+          rotate: { enabled: false, value: 0 },
+          shake: { enabled: false, value: 2 },
+          pulse: { enabled: false, value: 1 },
+          lamination: { enabled: false, speed: 1, angle: 45 }
+        }
       },
       hover: {
         label: 'Preview Button',
         backgroundColor: '#2563EB',
         backgroundOpacity: 100,
+        backgroundType: 'solid' as 'solid' | 'gradient',
+        backgroundGradient: {
+          start: '#2563EB',
+          end: '#1D4ED8',
+          direction: 'left-right' as 'left-right' | 'top-bottom' | '45deg' | '135deg'
+        },
         borderWidth: 1,
         borderColor: '#D1D5DB',
+        borderType: 'solid' as 'solid' | 'gradient',
+        borderGradient: {
+          start: '#D1D5DB',
+          end: '#9CA3AF',
+          direction: 'left-right' as 'left-right' | 'top-bottom' | '45deg' | '135deg'
+        },
         borderRadius: 6,
         shadowType: 'md',
         transitionDuration: 200,
+        animations: {
+          scale: { enabled: false, value: 1.05 },
+          translate: { enabled: false, value: -2 },
+          rotate: { enabled: false, value: 0 },
+          shake: { enabled: false, value: 2 },
+          pulse: { enabled: false, value: 1 },
+          lamination: { enabled: false, speed: 1, angle: 45 }
+        }
       },
     };
     setConfig(defaultConfig);

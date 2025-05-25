@@ -173,7 +173,7 @@ const PreviewPane = ({ config, sidebarCollapsed }: PreviewPaneProps) => {
         </CardContent>
       </Card>
       
-      <style jsx>{`
+      <style>{`
         @keyframes sweep {
           0% { transform: translateX(-100%); }
           100% { transform: translateX(100%); }
